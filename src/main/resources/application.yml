@@ -1,0 +1,39 @@
+spring.cloud.stream:
+  kafka:        
+    binder:
+      brokers:
+      - localhost:19092
+      - localhost:29092
+      - localhost:39092
+      producer-properties:
+        key.serializer: org.apache.kafka.common.serialization.StringSerializer
+        #value.serializer: org.apache.kafka.common.serialization.StringSerializer       
+    bindings:
+      sender-out-0:
+        producer:
+           messageKeyExpression: headers['key']  
+  function:
+    definition: sender
+  bindings:
+    sender-out-0:
+      destination: k-msg
+      group: k-msg-sender-group
+      binder: kafka
+#      producer:
+#        use-native-encoding: true
+    distinct-in-0:
+      destination: k-msg
+  kafka.streams.binder:
+        application-id: kp-msg-filter-example
+        brokers:
+        - localhost:19092
+        - localhost:29092
+        - localhost:39092
+        replication-factor: 3
+        required-acks: 2
+        min-partition-count: 5
+        configuration:
+          commit.interval.ms: 100
+          default:
+            key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+            value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde

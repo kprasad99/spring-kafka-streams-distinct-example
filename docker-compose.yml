@@ -1,0 +1,66 @@
+version: '2.4'
+
+services: 
+  zookeeper:
+    image: kprasad99/zookeeper:3.6.1
+    mem_limit: 512m
+    environment: 
+      ZOO_MY_ID: 1
+      ZOO_ENABLE_PROM_EXPORTER: "true"
+      ZOO_ENABLE_4LW_CMD: "*"
+    ports: 
+      - 12181:2181
+      - 12080:8080
+      - 12700:7000
+    networks:
+      - kafka-net
+  kafka-0:
+    image: kprasad99/kafka:2.5.0
+    mem_limit: 512m
+    hostname: kafka-0
+    environment: 
+      KAFKA_HOSTNAME: kafka-0
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://localhost:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_BROKER_ID_FROM_HOST: "true"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    ports:
+      - 9092
+      - 19092:19092
+    networks:
+      - kafka-net
+  kafka-1:
+    image: kprasad99/kafka:2.5.0
+    mem_limit: 512m
+    hostname: kafka-1
+    environment: 
+      KAFKA_HOSTNAME: kafka-1
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_BROKER_ID_FROM_HOST: "true"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    ports:
+      - 9092
+      - 29092:29092
+    networks:
+      - kafka-net
+  kafka-2:
+    image: kprasad99/kafka:2.5.0
+    mem_limit: 512m
+    hostname: kafka-2
+    environment: 
+      KAFKA_HOSTNAME: kafka-2
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://localhost:39092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_BROKER_ID_FROM_HOST: "true"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    ports: 
+      - 9092
+      - 39092:39092
+    networks:
+      - kafka-net
+networks:
+  kafka-net:
